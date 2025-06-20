@@ -1,96 +1,199 @@
--- ~/.config/nvim/lua/adrian/plugins.lua
-
 return {
-  plugins = {
-    -- --- Gerenciamento de Plugins ---
-    {
-      'folke/lazy.nvim',
-      version = 'auto',
+  -- UI and Navigation
+  {
+    "folke/which-key.nvim",
+    event = "VeryLazy",
+    opts = {
+      preset = "modern",
     },
-
-    -- --- UI / Essenciais ---
-    {
-      'nvim-telescope/telescope.nvim', tag = '0.1.x',
-      dependencies = { 'nvim-lua/plenary.nvim' },
+    keys = {
+      {
+        "<leader>?",
+        function()
+          require("which-key").show({ global = false })
+        end,
+        desc = "Buffer Local Keymaps (which-key)",
+      },
     },
-    {
-      'folke/which-key.nvim',
-      event = 'VimEnter',
-    },
-    {
-        'nvim-tree/nvim-tree.lua',
-        version = '*',
-        lazy = false,
-        dependencies = {
-            'nvim-tree/nvim-web-devicons', -- Required for file icons
+  },
+  
+  -- Themes Collection
+  {
+    "catppuccin/nvim",
+    name = "catppuccin",
+    priority = 1000,
+    config = function()
+      require("catppuccin").setup({
+        flavour = "mocha", -- latte, frappe, macchiato, mocha
+        transparent_background = false,
+        integrations = {
+          cmp = true,
+          telescope = true,
+          which_key = true,
+          treesitter = true,
+          mason = true,
+          nvimtree = true,
+          indent_blankline = {
+            enabled = true,
+            colored_indent_levels = false,
+          },
         },
-        config = function()
-            require('nvim-tree').setup {}
-        end
+      })
+      vim.cmd.colorscheme("catppuccin")
+    end,
+  },
+  
+  -- Additional Themes
+  { "folke/tokyonight.nvim", lazy = true },
+  { "EdenEast/nightfox.nvim", lazy = true },
+  { "rose-pine/neovim", name = "rose-pine", lazy = true },
+  { "ellisonleao/gruvbox.nvim", lazy = true },
+  { "rebelot/kanagawa.nvim", lazy = true },
+  { "sainnhe/everforest", lazy = true },
+  { "sainnhe/gruvbox-material", lazy = true },
+  { "sainnhe/sonokai", lazy = true },
+  { "sainnhe/edge", lazy = true },
+  { "Mofiqul/dracula.nvim", lazy = true },
+  { "projekt0n/github-nvim-theme", lazy = true },
+  { "marko-cerovac/material.nvim", lazy = true },
+  { "olimorris/onedarkpro.nvim", lazy = true },
+  { "navarasu/onedark.nvim", lazy = true },
+  { "Mofiqul/vscode.nvim", lazy = true },
+  { "shaunsingh/nord.nvim", lazy = true },
+  { "rmehri01/onenord.nvim", lazy = true },
+  { "AlexvZyl/nordic.nvim", lazy = true },
+  { "Shatur/neovim-ayu", lazy = true },
+  { "bluz71/vim-nightfly-colors", name = "nightfly", lazy = true },
+  { "bluz71/vim-moonfly-colors", name = "moonfly", lazy = true },
+  { "tiagovla/tokyodark.nvim", lazy = true },
+  { "Mofiqul/adwaita.nvim", lazy = true },
+  { "olivercederborg/poimandres.nvim", lazy = true },
+  { "Everblush/nvim", name = "everblush", lazy = true },
+  { "kvrohit/rasmus.nvim", lazy = true },
+  
+  -- Syntax Highlighting
+  {
+    "nvim-treesitter/nvim-treesitter",
+    build = ":TSUpdate",
+    event = { "BufReadPre", "BufNewFile" },
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter-textobjects",
+      "nvim-treesitter/nvim-treesitter-context",
     },
-    {
-        'numToStr/Comment.nvim',
+  },
+  
+  -- Telescope
+  { 
+    "nvim-telescope/telescope.nvim", 
+    dependencies = { 
+      "nvim-lua/plenary.nvim",
+      { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
+    },
+    event = "VeryLazy",
+  },
+  
+  -- Comment
+  {
+    "numToStr/Comment.nvim",
+    event = { "BufReadPre", "BufNewFile" },
+    dependencies = {
+      "JoosepAlviste/nvim-ts-context-commentstring",
+    },
+  },
+  
+  -- Completion
+  {
+    "hrsh7th/nvim-cmp",
+    event = "InsertEnter",
+    dependencies = {
+      "hrsh7th/cmp-nvim-lsp",
+      "hrsh7th/cmp-buffer",
+      "hrsh7th/cmp-path",
+      "hrsh7th/cmp-cmdline",
+      "hrsh7th/cmp-nvim-lua", -- Neovim Lua API completion
+      "hrsh7th/cmp-emoji", -- Emoji completion
+      "saadparwaiz1/cmp_luasnip",
+      {
+        "L3MON4D3/LuaSnip",
+        version = "v2.*",
+        build = "make install_jsregexp",
         dependencies = {
-            'JoosepAlviste/nvim-ts-context-commentstring', -- Opcional, melhora o auto-comentário
+          "rafamadriz/friendly-snippets",
         },
-        config = function()
-            require('Comment').setup({
-                -- Configurações padrão, você pode personalizar aqui
-                -- Ex: ignore_empty = true para não comentar linhas vazias
-            })
-        end
-    },
-
-    -- --- Autocompletar ---
-    {
-      'hrsh7th/nvim-cmp',
-      event = 'InsertEnter',
-      dependencies = {
-        'hrsh7th/cmp-nvim-lsp',
-        'hrsh7th/cmp-buffer',
-        'hrsh7th/cmp-path',
-        'hrsh7th/cmp-cmdline',
-        'saadparwaiz1/cmp_luasnip',
-        'L3MON4D3/LuaSnip',
       },
+      "onsails/lspkind.nvim", -- VS Code-like pictograms
     },
-
-    -- --- LSP ---
-    {
-      'neovim/nvim-lspconfig',
-      dependencies = {
-        'williamboman/mason.nvim',
-        'williamboman/mason-lspconfig.nvim',
-        'hrsh7th/cmp-nvim-lsp',
-        -- Para melhor integração do LSP com C/C++
-        'jose-elias-alvarez/null-ls.nvim', -- Para formatadores e linters adicionais
-        'nvim-lua/plenary.nvim',          -- Dependência de outros plugins
-      },
-      },
-    -- --- Tree-sitter (Sintaxe avançada) ---
-    {
-        'nvim-treesitter/nvim-treesitter',
-        build = ':TSUpdate',
-        config = function()
-            require('nvim-treesitter.configs').setup({
-                ensure_installed = { "c", "cpp", "python", "lua", "javascript", "typescript", "html", "css", "json", "bash" },
-                highlight = {
-                    enable = true,
-                },
-                indent = {
-                    enable = true,
-                },
-            })
-        end
+  },
+  
+  -- LSP
+  {
+    "williamboman/mason.nvim",
+    build = ":MasonUpdate",
+  },
+  {
+    "williamboman/mason-lspconfig.nvim",
+    dependencies = { "mason.nvim" },
+  },
+  {
+    "neovim/nvim-lspconfig",
+    dependencies = { "mason-lspconfig.nvim" },
+  },
+  
+  -- Formatting and Linting (Modern replacement for null-ls)
+  {
+    "stevearc/conform.nvim",
+    event = { "BufWritePre" },
+    cmd = { "ConformInfo" },
+  },
+  {
+    "mfussenegger/nvim-lint",
+    event = { "BufReadPre", "BufNewFile" },
+  },
+  
+  -- Schema store for JSON/YAML
+  {
+    "b0o/schemastore.nvim",
+    lazy = true,
+  },
+  
+  -- Auto pairs
+  {
+    "windwp/nvim-autopairs",
+    event = "InsertEnter",
+    dependencies = { "hrsh7th/nvim-cmp" },
+  },
+  
+  -- Surround
+  {
+    "kylechui/nvim-surround",
+    version = "*",
+    event = "VeryLazy",
+  },
+  
+  -- File Explorer
+  {
+    "nvim-tree/nvim-tree.lua",
+    version = "*",
+    lazy = false,
+    dependencies = {
+      "nvim-tree/nvim-web-devicons",
     },
-
-    -- --- Copilot ---
-    {
-      'zbirenbaum/copilot.lua',
-      event = 'InsertEnter',
-    },
-
-    -- --- Tema (Opcional, mas melhora o visual) ---
-    { 'catppuccin/nvim', name = 'catppuccin', priority = 1000 },
-  }
+  },
+  
+  -- AI Assistance
+  {
+    "zbirenbaum/copilot.lua",
+    cmd = "Copilot",
+    event = "InsertEnter",
+  },
+  
+  -- Icons
+  { 
+    "nvim-tree/nvim-web-devicons", 
+    lazy = true 
+  },
+  { 
+    "echasnovski/mini.icons", 
+    version = false 
+  },
 }
